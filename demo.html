@@ -3,406 +3,1367 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>jquery.charPicker — демо</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
+  <title>jquery.charPicker — Демо и документация</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="jquery.charPicker.css">
   <style>
-    /* ── Общие стили демо-страницы ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+    /* ── Переменные ────────────────────────────────────── */
     :root {
-      --bg: #f2f4f8;
-      --card: #fff;
-      --border: #dde3ec;
-      --accent: #3d7fd6;
-      --text: #1e2535;
-      --muted: #6b7a99;
-      --radius: 10px;
-      --shadow: 0 2px 16px rgba(30,37,53,.09);
+      --c-bg:        #f5f3ef;
+      --c-surface:   #ffffff;
+      --c-surface2:  #f0ede8;
+      --c-border:    #e2ddd6;
+      --c-text:      #1a1815;
+      --c-muted:     #8a8278;
+      --c-accent:    #c8622a;
+      --c-accent-2:  #2a6bc8;
+      --c-accent-3:  #2a9c5a;
+      --c-code-bg:   #1e1c1a;
+      --c-code-text: #e8e4de;
+      --c-code-key:  #e8945a;
+      --c-code-str:  #7ec88a;
+      --c-code-com:  #6a6560;
+      --r:           10px;
+      --r-sm:        6px;
+      --font-ui:     'Manrope', sans-serif;
+      --font-serif:  'Instrument Serif', Georgia, serif;
+      --font-mono:   'JetBrains Mono', monospace;
     }
 
+    /* ── Reset ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 40px 20px;
+      font-family: var(--font-ui);
+      background: var(--c-bg);
+      color: var(--c-text);
+      font-size: 15px;
+      line-height: 1.65;
     }
 
-    .page {
-      max-width: 760px;
-      margin: 0 auto;
+    /* ── Шапка ─────────────────────────────────────────── */
+    .site-header {
+      background: var(--c-text);
+      color: #f5f3ef;
+      padding: 64px 0 56px;
+      position: relative;
+      overflow: hidden;
     }
-
-    /* Шапка */
-    .hero {
-      background: linear-gradient(135deg, #1e2d5a 0%, #3461c0 100%);
-      color: #fff;
-      border-radius: var(--radius);
-      padding: 36px 40px;
-      margin-bottom: 32px;
-      box-shadow: var(--shadow);
+    .site-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 80% 50%, rgba(200,98,42,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(42,107,200,.12) 0%, transparent 60%);
+      pointer-events: none;
     }
-
-    .hero h1 {
-      font-size: 1.9em;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 8px;
-    }
-
-    .hero p {
-      font-size: .95em;
-      opacity: .8;
-      line-height: 1.6;
-    }
-
-    .badge {
-      display: inline-block;
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.3);
-      border-radius: 20px;
-      padding: 2px 10px;
-      font-size: .75em;
-      margin-right: 6px;
-      margin-top: 12px;
-    }
-
-    /* Карточки */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px 32px;
-      margin-bottom: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .card h2 {
-      font-size: 1em;
-      font-weight: 600;
-      color: var(--muted);
+    .site-header .wrap { position: relative; }
+    .header-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: .14em;
       text-transform: uppercase;
-      letter-spacing: .07em;
+      color: var(--c-accent);
       margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
     }
+    .header-title {
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -.02em;
+      margin-bottom: 18px;
+    }
+    .header-title em {
+      font-style: italic;
+      color: rgba(245,243,239,.55);
+    }
+    .header-sub {
+      font-size: 16px;
+      color: rgba(245,243,239,.65);
+      max-width: 520px;
+      margin-bottom: 32px;
+    }
+    .badges { display: flex; flex-wrap: wrap; gap: 8px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      color: rgba(245,243,239,.8);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .badge b { color: #f5f3ef; }
 
-    .field-row {
+    /* ── Навигация ─────────────────────────────────────── */
+    .site-nav {
+      background: var(--c-surface);
+      border-bottom: 1px solid var(--c-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-inner {
       display: flex;
-      flex-direction: column;
-      gap: 14px;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
     }
-
-    label {
-      font-size: .85em;
+    .nav-inner::-webkit-scrollbar { display: none; }
+    .nav-link {
+      flex: 0 0 auto;
+      padding: 14px 18px;
+      font-size: 13px;
       font-weight: 500;
-      color: var(--muted);
-      display: block;
-      margin-bottom: 5px;
+      color: var(--c-muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--c-text); }
+    .nav-link.active {
+      color: var(--c-accent);
+      border-bottom-color: var(--c-accent);
     }
 
-    input[type="text"],
-    textarea {
+    /* ── Основная сетка ────────────────────────────────── */
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .layout { display: grid; grid-template-columns: 1fr; gap: 48px; padding: 56px 0 80px; }
+
+    /* ── Секция ────────────────────────────────────────── */
+    .section { scroll-margin-top: 60px; }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--c-border);
+    }
+    .section-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--c-muted);
+      flex: 0 0 auto;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: -.02em;
+    }
+
+    /* ── Демо-карточки ─────────────────────────────────── */
+    .demo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px,1fr)); gap: 20px; }
+    .demo-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r);
+      overflow: hidden;
+    }
+    .demo-card-head {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--c-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .demo-card-icon {
+      width: 28px; height: 28px;
+      border-radius: 7px;
+      background: var(--c-surface2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex: 0 0 auto;
+    }
+    .demo-card-title { font-size: 13px; font-weight: 600; }
+    .demo-card-desc  { font-size: 12px; color: var(--c-muted); margin-top: 1px; }
+    .demo-card-body  { padding: 20px; }
+
+    /* ── Поля ввода ────────────────────────────────────── */
+    .field {
       width: 100%;
       padding: 9px 12px;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      font-size: 15px;
-      font-family: inherit;
-      color: var(--text);
-      background: #fafbfd;
-      outline: none;
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      font-family: var(--font-ui);
+      font-size: 14px;
+      color: var(--c-text);
+      background: var(--c-bg);
       transition: border-color .15s, box-shadow .15s;
+      outline: none;
     }
-
-    input[type="text"]:focus,
-    textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(61,127,214,.15);
+    .field:focus {
+      border-color: var(--c-accent);
+      box-shadow: 0 0 0 3px rgba(200,98,42,.12);
     }
+    textarea.field { resize: vertical; min-height: 80px; }
 
-    textarea { height: 100px; resize: vertical; }
+    /* ── Вывод события ─────────────────────────────────── */
+    .event-log {
+      margin-top: 10px;
+      min-height: 32px;
+      padding: 7px 11px;
+      background: var(--c-surface2);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--c-muted);
+      transition: color .2s;
+    }
+    .event-log.flash { color: var(--c-accent); }
 
-    /* Лог событий */
-    .log {
-      background: #1a2233;
-      color: #7dd3fc;
-      border-radius: 7px;
-      padding: 14px;
+    /* ── Кнопки ────────────────────────────────────────── */
+    .btn-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .btn {
+      padding: 7px 14px;
+      border-radius: var(--r-sm);
+      font-family: var(--font-ui);
       font-size: 12px;
-      font-family: 'Consolas', 'Fira Code', monospace;
-      min-height: 60px;
-      max-height: 120px;
-      overflow-y: auto;
-      line-height: 1.7;
-    }
-
-    .log .log-entry { animation: logfade .3s ease; }
-    @keyframes logfade { from { opacity: 0; } to { opacity: 1; } }
-    .log .dim { color: #4a6080; }
-
-    /* API таблица */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .88em;
-    }
-
-    th {
-      text-align: left;
-      padding: 8px 12px;
-      background: var(--bg);
       font-weight: 600;
-      color: var(--muted);
-      border-bottom: 2px solid var(--border);
-    }
-
-    td {
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-    }
-
-    td code {
-      background: #eef2fb;
-      border-radius: 4px;
-      padding: 1px 5px;
-      font-family: 'Consolas', monospace;
-      font-size: .95em;
-      color: #2d5fa8;
-    }
-
-    /* Кнопки */
-    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-
-    button.demo-btn {
-      padding: 7px 16px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: #fff;
-      font-size: .88em;
       cursor: pointer;
-      color: var(--text);
+      border: 1px solid var(--c-border);
+      background: var(--c-surface);
+      color: var(--c-text);
       transition: background .12s, border-color .12s;
     }
-
-    button.demo-btn:hover { background: #eef2fb; border-color: var(--accent); }
-    button.demo-btn.danger:hover { background: #fef2f2; border-color: #e74c3c; color: #c0392b; }
-
-    .footer {
-      text-align: center;
-      color: var(--muted);
-      font-size: .82em;
-      margin-top: 32px;
+    .btn:hover { background: var(--c-surface2); border-color: #c8c0b6; }
+    .btn-accent {
+      background: var(--c-accent);
+      border-color: var(--c-accent);
+      color: #fff;
     }
-  </style>
+    .btn-accent:hover { background: #b5551f; border-color: #b5551f; }
 
-  <!-- Стили плагина (inline для демо) -->
-  <style id="cp-styles">
-    /* ============================================================
-       jquery.charPicker.css  v1.0.0
-       ============================================================ */
-    .cp-wrapper{position:relative;display:inline-flex;align-items:stretch;width:100%;box-sizing:border-box}
-    .cp-wrapper>input,.cp-wrapper>textarea{flex:1 1 auto;min-width:0}
-    .cp-trigger{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:2.2em;min-height:2.2em;margin-left:4px;padding:0;border:1px solid #c8cfd8;border-radius:6px;background:#f4f6f8;cursor:pointer;font-size:1.1em;line-height:1;color:#555;transition:background .15s,border-color .15s,box-shadow .15s;user-select:none;-webkit-user-select:none}
-    .cp-trigger:hover{background:#e8edf2;border-color:#9aafc2;box-shadow:0 1px 4px rgba(0,0,0,.12)}
-    .cp-trigger.cp-active{background:#dbe8f5;border-color:#5b9bd5;color:#2d6da8}
-    .cp-trigger svg{pointer-events:none}
-    .cp-popup{position:absolute;z-index:9999;width:320px;background:#fff;border:1px solid #cdd5de;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.18),0 2px 8px rgba(0,0,0,.08);display:flex;flex-direction:column;overflow:hidden;animation:cp-fadein .12s ease}
-    @keyframes cp-fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-    .cp-popup.cp-pos-bottom{top:calc(100% + 6px);left:0}
-    .cp-popup.cp-pos-top{bottom:calc(100% + 6px);left:0}
-    .cp-popup.cp-pos-right{right:0;left:auto}
-    .cp-search-wrap{padding:10px 10px 8px;border-bottom:1px solid #e8ecf0;background:#f8f9fb}
-    .cp-search{width:100%;box-sizing:border-box;padding:6px 10px 6px 30px;border:1px solid #c8cfd8;border-radius:6px;font-size:13px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E") no-repeat 8px center;outline:none;transition:border-color .15s;color:#333}
-    .cp-search:focus{border-color:#5b9bd5;box-shadow:0 0 0 2px rgba(91,155,213,.2)}
-    .cp-search::placeholder{color:#aaa}
-    .cp-tabs{display:flex;overflow-x:auto;scrollbar-width:none;background:#f8f9fb;border-bottom:1px solid #e8ecf0;padding:0 6px;gap:2px}
-    .cp-tabs::-webkit-scrollbar{display:none}
-    .cp-tab{flex:0 0 auto;padding:6px 8px;font-size:14px;cursor:pointer;border-bottom:2px solid transparent;color:#666;white-space:nowrap;transition:color .12s,border-color .12s;user-select:none;-webkit-user-select:none}
-    .cp-tab:hover{color:#333}
-    .cp-tab.cp-tab-active{border-bottom-color:#5b9bd5;color:#2d6da8}
-    .cp-body{overflow-y:auto;max-height:240px;padding:8px 6px;min-height:60px}
-    .cp-section-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#999;padding:4px 4px 2px;margin-top:4px}
-    .cp-section-title:first-child{margin-top:0}
-    .cp-grid{display:flex;flex-wrap:wrap;gap:1px;margin-bottom:4px}
-    .cp-char{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;font-size:20px;border-radius:6px;cursor:pointer;border:1px solid transparent;transition:background .1s,transform .08s;user-select:none;-webkit-user-select:none;line-height:1;box-sizing:border-box;position:relative}
-    .cp-char:hover{background:#e8f0fb;border-color:#c0d4ef;transform:scale(1.18);z-index:1}
-    .cp-char:active{transform:scale(.95);background:#d0e4f5}
-    .cp-char.cp-sym{font-size:16px;font-family:'Georgia','Times New Roman',serif}
-    .cp-tooltip{position:fixed;background:#1a2233;color:#fff;font-size:11px;padding:3px 7px;border-radius:4px;pointer-events:none;z-index:99999;white-space:nowrap;opacity:0;transition:opacity .1s;max-width:180px;overflow:hidden;text-overflow:ellipsis}
-    .cp-tooltip.cp-tooltip-show{opacity:1}
-    .cp-empty{text-align:center;color:#aaa;font-size:13px;padding:20px 10px}
-    .cp-body::-webkit-scrollbar{width:4px}
-    .cp-body::-webkit-scrollbar-thumb{background:#d0d8e4;border-radius:2px}
-    .cp-body::-webkit-scrollbar-track{background:transparent}
+    /* ── Блок кода ─────────────────────────────────────── */
+    .code-block {
+      background: var(--c-code-bg);
+      border-radius: var(--r);
+      overflow: hidden;
+    }
+    .code-block-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: rgba(255,255,255,.04);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .code-lang {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.3);
+    }
+    .copy-btn {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: rgba(255,255,255,.35);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: color .15s, background .15s;
+    }
+    .copy-btn:hover { color: #fff; background: rgba(255,255,255,.08); }
+    .code-block pre {
+      padding: 20px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--c-code-text);
+    }
+    .code-block code .kw  { color: #9ecbf5; }
+    .code-block code .str { color: var(--c-code-str); }
+    .code-block code .com { color: var(--c-code-com); font-style: italic; }
+    .code-block code .fn  { color: #dca9f5; }
+    .code-block code .num { color: #f5c842; }
+    .code-block code .key { color: var(--c-code-key); }
+
+    /* ── Таблицы ───────────────────────────────────────── */
+    .doc-table-wrap { overflow-x: auto; border-radius: var(--r); border: 1px solid var(--c-border); }
+    .doc-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .doc-table th {
+      background: var(--c-surface2);
+      padding: 10px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--c-muted);
+      border-bottom: 1px solid var(--c-border);
+    }
+    .doc-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--c-border);
+      vertical-align: top;
+    }
+    .doc-table tr:last-child td { border-bottom: none; }
+    .doc-table tr:hover td { background: var(--c-surface2); }
+    .doc-table code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--c-surface2);
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--c-border);
+    }
+
+    /* ── Опции-карточки ────────────────────────────────── */
+    .opt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 14px; }
+    .opt-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r);
+      padding: 18px 20px;
+    }
+    .opt-name {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--c-accent);
+      margin-bottom: 4px;
+    }
+    .opt-type {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--c-muted);
+      background: var(--c-surface2);
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--c-border);
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .opt-default {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #2a9c5a;
+      background: rgba(42,156,90,.08);
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(42,156,90,.2);
+      display: inline-block;
+      margin-left: 4px;
+      margin-bottom: 8px;
+    }
+    .opt-desc { font-size: 13px; color: var(--c-muted); line-height: 1.55; }
+
+    /* ── Панели-чипы ───────────────────────────────────── */
+    .panels-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .panel-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      padding: 10px 14px;
+      min-width: 190px;
+    }
+    .panel-chip-icon { font-size: 20px; line-height: 1; flex: 0 0 auto; }
+    .panel-chip-id {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--c-accent-2);
+    }
+    .panel-chip-name { font-size: 12px; color: var(--c-muted); }
+    .panel-chip-count {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--c-muted);
+      background: var(--c-surface2);
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+
+    /* ── Архитектурная схема ───────────────────────────── */
+    .arch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 14px; }
+    .arch-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r);
+      padding: 18px 20px;
+    }
+    .arch-card-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--c-muted);
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--c-border);
+    }
+    .arch-item {
+      display: flex;
+      gap: 8px;
+      font-size: 12.5px;
+      padding: 4px 0;
+      border-bottom: 1px dashed var(--c-border);
+    }
+    .arch-item:last-child { border-bottom: none; }
+    .arch-item-name {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--c-accent);
+      flex: 0 0 auto;
+      min-width: 120px;
+    }
+    .arch-item-desc { color: var(--c-muted); font-size: 12px; }
+
+    /* ── Инфо-блок ─────────────────────────────────────── */
+    .info-box {
+      display: flex;
+      gap: 12px;
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-left: 3px solid var(--c-accent);
+      border-radius: var(--r-sm);
+      padding: 14px 16px;
+      font-size: 13.5px;
+    }
+    .info-box.blue { border-left-color: var(--c-accent-2); }
+    .info-box.green { border-left-color: var(--c-accent-3); }
+
+    /* ── Поиск-демо ────────────────────────────────────── */
+    .search-demo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .search-case {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      padding: 14px 16px;
+    }
+    .search-case-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--c-muted);
+      margin-bottom: 8px;
+    }
+    .search-case-typed {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--c-accent);
+    }
+    .search-case-arrow {
+      color: var(--c-muted);
+      margin: 0 4px;
+    }
+    .search-case-result {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--c-accent-3);
+    }
+
+    /* ── BEM-блок ──────────────────────────────────────── */
+    .bem-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 12px; }
+    .bem-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px 14px;
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+    }
+    .bem-class {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      flex: 0 0 auto;
+      min-width: 200px;
+    }
+    .bem-block  { color: var(--c-accent); }
+    .bem-elem   { color: var(--c-accent-2); }
+    .bem-mod    { color: var(--c-accent-3); }
+    .bem-desc   { font-size: 12px; color: var(--c-muted); }
+
+    /* ── Footer ────────────────────────────────────────── */
+    .site-footer {
+      background: var(--c-text);
+      color: rgba(245,243,239,.5);
+      padding: 32px 0;
+      margin-top: 40px;
+      font-size: 13px;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer-logo {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 400;
+      color: #f5f3ef;
+    }
+
+    /* ── DOM-дерево ────────────────────────────────────── */
+    .dom-tree {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      line-height: 1.8;
+      background: var(--c-code-bg);
+      color: var(--c-code-text);
+      padding: 20px 24px;
+      border-radius: var(--r);
+      overflow-x: auto;
+    }
+    .dom-tag  { color: #9ecbf5; }
+    .dom-cls  { color: var(--c-code-key); }
+    .dom-attr { color: #7ec88a; }
+    .dom-com  { color: var(--c-code-com); font-style: italic; }
+    .dom-text { color: rgba(232,228,222,.5); }
+
+    @media (max-width: 640px) {
+      .search-demo { grid-template-columns: 1fr; }
+      .demo-grid   { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
-<div class="page">
 
-  <!-- Шапка -->
-  <div class="hero">
-    <h1>☺ jquery.charPicker</h1>
-    <p>jQuery-плагин для вставки спецсимволов и эмодзи в <code>input</code> / <code>textarea</code>.<br>
-       Эмулирует на десктопе функциональность мобильной клавиатуры.</p>
-    <div>
-      <span class="badge">v1.0.0</span>
-      <span class="badge">jQuery ≥ 1.9</span>
-      <span class="badge">Без зависимостей</span>
-      <span class="badge">XSS-safe</span>
-      <span class="badge">MIT</span>
+<!-- ══ ШАПКА ══════════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="wrap">
+    <p class="header-eyebrow">jQuery Plugin · v1.2.0</p>
+    <h1 class="header-title">jquery.<em>charPicker</em></h1>
+    <p class="header-sub">Вставка спецсимволов и эмодзи в input/textarea. Поиск с умной коррекцией раскладки EN↔RU. BEM-стили, никаких зависимостей кроме jQuery.</p>
+    <div class="badges">
+      <span class="badge">⚙️ <b>ES5</b> совместим</span>
+      <span class="badge">📦 <b>jQuery ≥ 1.9</b></span>
+      <span class="badge">🎨 <b>BEM</b> · блок .jcp</span>
+      <span class="badge">🔣 <b>~372</b> символа</span>
+      <span class="badge">⌨️ <b>EN↔RU</b> раскладка</span>
+      <span class="badge">🔒 <b>XSS</b>-защита</span>
     </div>
   </div>
+</header>
 
-  <!-- Демо: поля -->
-  <div class="card">
-    <h2>Демо — поля ввода</h2>
-    <div class="field-row">
-
-      <div>
-        <label for="f1">Однострочное поле (input)</label>
-        <input type="text" id="f1" placeholder="Нажмите ☺ справа для выбора символа">
-      </div>
-
-      <div>
-        <label for="f2">Многострочное поле (textarea)</label>
-        <textarea id="f2" placeholder="Вставляйте символы в нужную позицию…"></textarea>
-      </div>
-
-      <div>
-        <label for="f3">Поле с коллбэком onSelect</label>
-        <input type="text" id="f3" placeholder="Лог внизу покажет выбранный символ">
-      </div>
-
+<!-- ══ НАВИГАЦИЯ ═══════════════════════════════════════════════ -->
+<nav class="site-nav">
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="#quickstart" class="nav-link active">Старт</a>
+      <a href="#demo"       class="nav-link">Демо</a>
+      <a href="#api"        class="nav-link">API</a>
+      <a href="#options"    class="nav-link">Опции</a>
+      <a href="#panels"     class="nav-link">Панели</a>
+      <a href="#search"     class="nav-link">Поиск</a>
+      <a href="#bem"        class="nav-link">BEM</a>
+      <a href="#arch"       class="nav-link">Архитектура</a>
+      <a href="#security"   class="nav-link">Безопасность</a>
     </div>
   </div>
+</nav>
 
-  <!-- Лог событий -->
-  <div class="card">
-    <h2>Лог событий</h2>
-    <div class="log" id="log">
-      <div class="dim">// Выберите символ — здесь появится событие</div>
-    </div>
+<!-- ══ КОНТЕНТ ════════════════════════════════════════════════ -->
+<div class="wrap">
+<div class="layout">
+
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<!-- БЫСТРЫЙ СТАРТ                                              -->
+<!-- ─────────────────────────────────────────────────────────── -->
+<section id="quickstart" class="section">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Быстрый старт</h2>
   </div>
 
-  <!-- API -->
-  <div class="card">
-    <h2>API — методы</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Вызов</th>
-          <th>Описание</th>
-        </tr>
-      </thead>
+  <div class="code-block" style="margin-bottom:20px">
+    <div class="code-block-head">
+      <span class="code-lang">html</span>
+      <button class="copy-btn" onclick="copyCode(this)">копировать</button>
+    </div>
+    <pre><code><span class="com">&lt;!-- 1. Подключить стили --&gt;</span>
+<span class="kw">&lt;link</span> <span class="key">rel</span>=<span class="str">"stylesheet"</span> <span class="key">href</span>=<span class="str">"jquery.charPicker.css"</span><span class="kw">&gt;</span>
+
+<span class="com">&lt;!-- 2. Разметка --&gt;</span>
+<span class="kw">&lt;input</span> <span class="key">type</span>=<span class="str">"text"</span> <span class="key">id</span>=<span class="str">"field"</span> <span class="key">placeholder</span>=<span class="str">"Введите текст…"</span><span class="kw">&gt;</span>
+
+<span class="com">&lt;!-- 3. Подключить jQuery и плагин --&gt;</span>
+<span class="kw">&lt;script</span> <span class="key">src</span>=<span class="str">"jquery-3.7.1.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+<span class="kw">&lt;script</span> <span class="key">src</span>=<span class="str">"jquery.charPicker.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+
+<span class="com">&lt;!-- 4. Инициализация --&gt;</span>
+<span class="kw">&lt;script&gt;</span>
+  $(<span class="str">'#field'</span>).<span class="fn">charPicker</span>();
+<span class="kw">&lt;/script&gt;</span></code></pre>
+  </div>
+
+  <div class="info-box">
+    <span>💡</span>
+    <div>После инициализации рядом с полем появится кнопка ☺. Клик открывает попап с поиском и 10 панелями символов. Клик по символу вставляет его в позицию курсора.</div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<!-- ЖИВОЕ ДЕМО                                                 -->
+<!-- ─────────────────────────────────────────────────────────── -->
+<section id="demo" class="section">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Живое демо</h2>
+  </div>
+
+  <div class="demo-grid">
+
+    <!-- Стандартный -->
+    <div class="demo-card">
+      <div class="demo-card-head">
+        <div class="demo-card-icon">🌐</div>
+        <div>
+          <div class="demo-card-title">Все панели</div>
+          <div class="demo-card-desc">Стандартная инициализация · panels: null</div>
+        </div>
+      </div>
+      <div class="demo-card-body">
+        <input type="text" id="demo-all" class="field" placeholder="Нажмите ☺ или начните вводить…">
+        <div class="event-log" id="log-all">ожидание…</div>
+      </div>
+    </div>
+
+    <!-- Только эмодзи -->
+    <div class="demo-card">
+      <div class="demo-card-head">
+        <div class="demo-card-icon">😀</div>
+        <div>
+          <div class="demo-card-title">Только эмодзи</div>
+          <div class="demo-card-desc">smileys, gestures, nature, food, symbols_emo</div>
+        </div>
+      </div>
+      <div class="demo-card-body">
+        <input type="text" id="demo-emoji" class="field" placeholder="Только эмодзи…">
+        <div class="event-log" id="log-emoji">ожидание…</div>
+      </div>
+    </div>
+
+    <!-- Спецсимволы -->
+    <div class="demo-card">
+      <div class="demo-card-head">
+        <div class="demo-card-icon">∑</div>
+        <div>
+          <div class="demo-card-title">Спецсимволы</div>
+          <div class="demo-card-desc">arrows, math, typography, currency, diacritics</div>
+        </div>
+      </div>
+      <div class="demo-card-body">
+        <input type="text" id="demo-sym" class="field" placeholder="Без эмодзи…">
+        <div class="event-log" id="log-sym">ожидание…</div>
+      </div>
+    </div>
+
+    <!-- Типографика -->
+    <div class="demo-card">
+      <div class="demo-card-head">
+        <div class="demo-card-icon">«</div>
+        <div>
+          <div class="demo-card-title">Типографика</div>
+          <div class="demo-card-desc">typography + currency · для редактора</div>
+        </div>
+      </div>
+      <div class="demo-card-body">
+        <input type="text" id="demo-typo" class="field" placeholder="Кавычки, тире, знаки…">
+        <div class="event-log" id="log-typo">ожидание…</div>
+      </div>
+    </div>
+
+    <!-- Textarea -->
+    <div class="demo-card">
+      <div class="demo-card-head">
+        <div class="demo-card-icon">📝</div>
+        <div>
+          <div class="demo-card-title">Textarea</div>
+          <div class="demo-card-desc">Многострочное поле · все панели</div>
+        </div>
+      </div>
+      <div class="demo-card-body">
+        <textarea id="demo-area" class="field" placeholder="Многострочный текст…"></textarea>
+        <div class="event-log" id="log-area">ожидание…</div>
+      </div>
+    </div>
+
+    <!-- Управление -->
+    <div class="demo-card">
+      <div class="demo-card-head">
+        <div class="demo-card-icon">⚙️</div>
+        <div>
+          <div class="demo-card-title">Программное управление</div>
+          <div class="demo-card-desc">open / close / destroy / reinit</div>
+        </div>
+      </div>
+      <div class="demo-card-body">
+        <input type="text" id="demo-ctrl" class="field" placeholder="Управление через API…">
+        <div class="btn-row">
+          <button class="btn btn-accent" onclick="$('#demo-ctrl').charPicker('open')">open()</button>
+          <button class="btn" onclick="$('#demo-ctrl').charPicker('close')">close()</button>
+          <button class="btn" onclick="destroyDemo()">destroy()</button>
+          <button class="btn" onclick="reinitDemo()">reinit()</button>
+        </div>
+        <div class="event-log" id="log-ctrl">ожидание…</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<!-- API                                                        -->
+<!-- ─────────────────────────────────────────────────────────── -->
+<section id="api" class="section">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">API</h2>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:14px; margin-bottom:24px">
+
+    <div class="code-block">
+      <div class="code-block-head"><span class="code-lang">инициализация</span></div>
+      <pre><code><span class="com">// Defaults</span>
+$(<span class="str">'#f'</span>).<span class="fn">charPicker</span>();
+
+<span class="com">// С опциями</span>
+$(<span class="str">'#f'</span>).<span class="fn">charPicker</span>({ panels: [<span class="str">'math'</span>] });
+
+<span class="com">// Несколько полей</span>
+$(<span class="str">'input, textarea'</span>).<span class="fn">charPicker</span>();</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block-head"><span class="code-lang">методы</span></div>
+      <pre><code><span class="com">// Открыть попап</span>
+$(<span class="str">'#f'</span>).<span class="fn">charPicker</span>(<span class="str">'open'</span>);
+
+<span class="com">// Закрыть попап</span>
+$(<span class="str">'#f'</span>).<span class="fn">charPicker</span>(<span class="str">'close'</span>);
+
+<span class="com">// Удалить плагин</span>
+$(<span class="str">'#f'</span>).<span class="fn">charPicker</span>(<span class="str">'destroy'</span>);</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block-head"><span class="code-lang">прямой доступ</span></div>
+      <pre><code><span class="com">// Экземпляр CharPicker</span>
+<span class="kw">var</span> inst = $(<span class="str">'#f'</span>)
+  .<span class="fn">data</span>(<span class="str">'cp-instance'</span>);
+
+<span class="kw">if</span> (inst) {
+  inst.<span class="fn">open</span>();
+  inst.<span class="fn">close</span>();
+  inst.<span class="fn">destroy</span>();
+}</code></pre>
+    </div>
+
+  </div>
+
+  <div class="doc-table-wrap">
+    <table class="doc-table">
+      <thead><tr><th>Метод</th><th>Описание</th><th>Повтор</th></tr></thead>
       <tbody>
         <tr>
-          <td><code>$(el).charPicker()</code></td>
-          <td>Инициализация с настройками по умолчанию</td>
+          <td><code>charPicker(options)</code></td>
+          <td>Инициализация. Повторный вызов на том же элементе — игнорируется.</td>
+          <td>нет эффекта</td>
         </tr>
         <tr>
-          <td><code>$(el).charPicker({ recentMax: 16 })</code></td>
-          <td>С опциями</td>
+          <td><code>charPicker('open')</code></td>
+          <td>Открывает попап, фокусирует поиск, пересчитывает позицию.</td>
+          <td>нет эффекта</td>
         </tr>
         <tr>
-          <td><code>$(el).charPicker('open')</code></td>
-          <td>Открыть попап программно</td>
+          <td><code>charPicker('close')</code></td>
+          <td>Закрывает попап, скрывает тултип, обновляет <code>aria-expanded</code>.</td>
+          <td>нет эффекта</td>
         </tr>
         <tr>
-          <td><code>$(el).charPicker('close')</code></td>
-          <td>Закрыть попап</td>
-        </tr>
-        <tr>
-          <td><code>$(el).charPicker('destroy')</code></td>
-          <td>Снести плагин, вернуть элемент в исходное состояние</td>
+          <td><code>charPicker('destroy')</code></td>
+          <td>Снимает обработчики, удаляет DOM-элементы, возвращает <code>input</code> в исходное место.</td>
+          <td>ошибка</td>
         </tr>
       </tbody>
     </table>
+  </div>
+</section>
 
-    <div class="btn-row">
-      <button class="demo-btn" id="btn-open">Открыть f1.open()</button>
-      <button class="demo-btn" id="btn-close">Закрыть f1.close()</button>
-      <button class="demo-btn danger" id="btn-destroy">destroy() на f1</button>
-      <button class="demo-btn" id="btn-reinit">reinit f1</button>
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<!-- ОПЦИИ                                                      -->
+<!-- ─────────────────────────────────────────────────────────── -->
+<section id="options" class="section">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Опции</h2>
+  </div>
+
+  <div class="code-block" style="margin-bottom:24px">
+    <div class="code-block-head"><span class="code-lang">javascript</span><button class="copy-btn" onclick="copyCode(this)">копировать</button></div>
+    <pre><code>$(<span class="str">'#field'</span>).<span class="fn">charPicker</span>({
+  recentMax : <span class="num">32</span>,         <span class="com">// макс. символов в «Недавних»</span>
+  position  : <span class="str">'auto'</span>,    <span class="com">// 'auto' | 'top' | 'bottom'</span>
+  panels    : <span class="kw">null</span>,      <span class="com">// null = все; ['smileys'] = только эти; [] = ни одной</span>
+  onOpen    : <span class="kw">null</span>,      <span class="com">// function(), this = el</span>
+  onClose   : <span class="kw">null</span>,      <span class="com">// function(), this = el</span>
+  onSelect  : <span class="kw">null</span>       <span class="com">// function(char, name), this = el</span>
+});</code></pre>
+  </div>
+
+  <div class="opt-grid">
+    <div class="opt-card">
+      <div class="opt-name">recentMax</div>
+      <span class="opt-type">number</span><span class="opt-default">32</span>
+      <div class="opt-desc">Максимум символов в панели «Недавние». При превышении самые старые вытесняются новыми.</div>
+    </div>
+    <div class="opt-card">
+      <div class="opt-name">position</div>
+      <span class="opt-type">'auto' | 'top' | 'bottom'</span><span class="opt-default">'auto'</span>
+      <div class="opt-desc"><b>auto</b> — вниз если достаточно места, вверх если снизу тесно. <b>top/bottom</b> — принудительно. Всегда прижимается к правому краю экрана если не умещается слева.</div>
+    </div>
+    <div class="opt-card">
+      <div class="opt-name">panels</div>
+      <span class="opt-type">Array | null</span><span class="opt-default">null</span>
+      <div class="opt-desc"><b>null</b> — показать все группы. <b>['smileys','math']</b> — только эти. <b>[]</b> — ни одной (только «Недавние» если есть). Панель recent управляется автоматически.</div>
+    </div>
+    <div class="opt-card">
+      <div class="opt-name">onOpen</div>
+      <span class="opt-type">function | null</span><span class="opt-default">null</span>
+      <div class="opt-desc">Вызывается при открытии попапа. <code>this</code> — DOM-элемент input/textarea.</div>
+    </div>
+    <div class="opt-card">
+      <div class="opt-name">onClose</div>
+      <span class="opt-type">function | null</span><span class="opt-default">null</span>
+      <div class="opt-desc">Вызывается при закрытии попапа. <code>this</code> — DOM-элемент input/textarea.</div>
+    </div>
+    <div class="opt-card">
+      <div class="opt-name">onSelect</div>
+      <span class="opt-type">function | null</span><span class="opt-default">null</span>
+      <div class="opt-desc">Вызывается после вставки символа. Аргументы: <code>function(char, name)</code>. <code>this.value</code> уже содержит обновлённое значение.</div>
     </div>
   </div>
 
-  <!-- Опции -->
-  <div class="card">
-    <h2>Опции</h2>
-    <table>
-      <thead>
-        <tr><th>Опция</th><th>По умолчанию</th><th>Описание</th></tr>
-      </thead>
-      <tbody>
-        <tr><td><code>recentMax</code></td><td><code>32</code></td><td>Макс. символов в «Недавних»</td></tr>
-        <tr><td><code>position</code></td><td><code>'auto'</code></td><td><code>'auto'</code> | <code>'top'</code> | <code>'bottom'</code></td></tr>
-        <tr><td><code>onOpen</code></td><td><code>null</code></td><td>Коллбэк при открытии попапа</td></tr>
-        <tr><td><code>onClose</code></td><td><code>null</code></td><td>Коллбэк при закрытии попапа</td></tr>
-        <tr><td><code>onSelect</code></td><td><code>null</code></td><td><code>function(char, name)</code> — при выборе символа</td></tr>
-      </tbody>
-    </table>
+  <div style="margin-top:20px">
+    <div class="code-block">
+      <div class="code-block-head"><span class="code-lang">onSelect — пример</span></div>
+      <pre><code>$(<span class="str">'#editor'</span>).<span class="fn">charPicker</span>({
+  <span class="fn">onSelect</span>: <span class="kw">function</span>(char, name) {
+    <span class="com">// char — вставленный символ:  '😀'</span>
+    <span class="com">// name — его составное имя:   'grinning smile улыбка'</span>
+    <span class="com">// this  — DOM-элемент input/textarea</span>
+    <span class="com">// this.value уже обновлено</span>
+    console.<span class="fn">log</span>(<span class="str">'Вставлен:'</span>, char, <span class="str">'—'</span>, name);
+  }
+});</code></pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<!-- ПАНЕЛИ                                                     -->
+<!-- ─────────────────────────────────────────────────────────── -->
+<section id="panels" class="section">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title">Панели символов</h2>
   </div>
 
-  <div class="footer">jquery.charPicker v1.0.0 · MIT · No external dependencies</div>
-</div>
+  <div class="panels-grid" style="margin-bottom:24px">
+    <div class="panel-chip">
+      <div class="panel-chip-icon">😀</div>
+      <div><div class="panel-chip-id">smileys</div><div class="panel-chip-name">Смайлы и эмоции</div></div>
+      <div class="panel-chip-count">41</div>
+    </div>
+    <div class="panel-chip">
+      <div class="panel-chip-icon">👋</div>
+      <div><div class="panel-chip-id">gestures</div><div class="panel-chip-name">Жесты рук</div></div>
+      <div class="panel-chip-count">29</div>
+    </div>
+    <div class="panel-chip">
+      <div class="panel-chip-icon">🌿</div>
+      <div><div class="panel-chip-id">nature</div><div class="panel-chip-name">Природа и животные</div></div>
+      <div class="panel-chip-count">44</div>
+    </div>
+    <div class="panel-chip">
+      <div class="panel-chip-icon">🍕</div>
+      <div><div class="panel-chip-id">food</div><div class="panel-chip-name">Еда и напитки</div></div>
+      <div class="panel-chip-count">34</div>
+    </div>
+    <div class="panel-chip">
+      <div class="panel-chip-icon">💯</div>
+      <div><div class="panel-chip-id">symbols_emo</div><div class="panel-chip-name">Символьные эмодзи</div></div>
+      <div class="panel-chip-count">35</div>
+    </div>
+    <div class="panel-chip">
+      <div class="panel-chip-icon">→</div>
+      <div><div class="panel-chip-id">arrows</div><div class="panel-chip-name">Стрелки и указатели</div></div>
+      <div class="panel-chip-count">30</div>
+    </div>
+    <div class="panel-chip">
+      <div class="panel-chip-icon">∑</div>
+      <div><div class="panel-chip-id">math</div><div class="panel-chip-name">Математика и греч.</div></div>
+      <div class="panel-chip-count">42</div>
+    </div>
+    <div class="panel-chip">
+      <div class="panel-chip-icon">«</div>
+      <div><div class="panel-chip-id">typography</div><div class="panel-chip-name">Типографика</div></div>
+      <div class="panel-chip-count">33</div>
+    </div>
+    <div class="panel-chip">
+      <div class="panel-chip-icon">€</div>
+      <div><div class="panel-chip-id">currency</div><div class="panel-chip-name">Знаки валют</div></div>
+      <div class="panel-chip-count">25</div>
+    </div>
+    <div class="panel-chip">
+      <div class="panel-chip-icon">À</div>
+      <div><div class="panel-chip-id">diacritics</div><div class="panel-chip-name">Диакритика</div></div>
+      <div class="panel-chip-count">59</div>
+    </div>
+  </div>
 
-<!-- Скрипт плагина (встроен) -->
-<script>
-/* ── jquery.charPicker.js встроен для демо ── */
-</script>
+  <div class="code-block">
+    <div class="code-block-head"><span class="code-lang">примеры фильтрации</span></div>
+    <pre><code><span class="com">// Только эмодзи</span>
+$(<span class="str">'#f'</span>).<span class="fn">charPicker</span>({ panels: [<span class="str">'smileys'</span>, <span class="str">'gestures'</span>, <span class="str">'nature'</span>, <span class="str">'food'</span>, <span class="str">'symbols_emo'</span>] });
+
+<span class="com">// Только спецсимволы (без эмодзи)</span>
+$(<span class="str">'#f'</span>).<span class="fn">charPicker</span>({ panels: [<span class="str">'arrows'</span>, <span class="str">'math'</span>, <span class="str">'typography'</span>, <span class="str">'currency'</span>, <span class="str">'diacritics'</span>] });
+
+<span class="com">// Поле ввода цены — только валюты</span>
+$(<span class="str">'#price'</span>).<span class="fn">charPicker</span>({ panels: [<span class="str">'currency'</span>] });
+
+<span class="com">// Текстовый редактор — типографика</span>
+$(<span class="str">'#editor'</span>).<span class="fn">charPicker</span>({ panels: [<span class="str">'typography'</span>, <span class="str">'arrows'</span>] });
+
+<span class="com">// Ни одной группы (только «Недавние» если есть история)</span>
+$(<span class="str">'#f'</span>).<span class="fn">charPicker</span>({ panels: [] });
+
+<span class="com">// Панель recent управляется автоматически — указывать не нужно</span></code></pre>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<!-- ПОИСК И РАСКЛАДКА                                          -->
+<!-- ─────────────────────────────────────────────────────────── -->
+<section id="search" class="section">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2 class="section-title">Поиск и умная раскладка</h2>
+  </div>
+
+  <p style="margin-bottom:20px; color:var(--c-muted); max-width:680px">
+    Каждый символ имеет составное двуязычное имя. Поиск ищет подстроку без учёта регистра, debounce 200 мс.
+    Главная особенность — <strong>автоматическая коррекция раскладки клавиатуры</strong>.
+  </p>
+
+  <div class="code-block" style="margin-bottom:20px">
+    <div class="code-block-head"><span class="code-lang">формат имён символов</span></div>
+    <pre><code>😀  <span class="str">'grinning smile улыбка'</span>
+→   <span class="str">'вправо right arrow'</span>
+©   <span class="str">'авторское право copyright'</span>
+€   <span class="str">'евро euro'</span>
+À   <span class="str">'a с акутом a with grave'</span></code></pre>
+  </div>
+
+  <div style="background:var(--c-surface); border:1px solid var(--c-border); border-radius:var(--r); padding:24px; margin-bottom:20px">
+    <p style="font-size:13px; font-weight:600; margin-bottom:16px">Алгоритм коррекции раскладки</p>
+    <div class="search-demo">
+      <div class="search-case">
+        <div class="search-case-label">Хотел «сердце», набрал в EN</div>
+        <div>
+          <span class="search-case-typed">cthlwt</span>
+          <span class="search-case-arrow">→</span>
+          <span class="search-case-result">сердце</span>
+        </div>
+        <div style="font-size:11px;color:var(--c-muted);margin-top:4px">Нашёл: ❤️ 🧡 💛 💚 💙</div>
+      </div>
+      <div class="search-case">
+        <div class="search-case-label">Хотел «arrow», набрал в RU</div>
+        <div>
+          <span class="search-case-typed">фккщц</span>
+          <span class="search-case-arrow">→</span>
+          <span class="search-case-result">arrow</span>
+        </div>
+        <div style="font-size:11px;color:var(--c-muted);margin-top:4px">Нашёл: → ← ↑ ↓ ↔ ↕ …</div>
+      </div>
+      <div class="search-case">
+        <div class="search-case-label">Хотел «улыбка», набрал в EN</div>
+        <div>
+          <span class="search-case-typed">ekmirrf</span>
+          <span class="search-case-arrow">→</span>
+          <span class="search-case-result">улыбка</span>
+        </div>
+        <div style="font-size:11px;color:var(--c-muted);margin-top:4px">Нашёл: 😀 😊 😄 😁 …</div>
+      </div>
+      <div class="search-case">
+        <div class="search-case-label">Правильный ввод «heart»</div>
+        <div>
+          <span class="search-case-typed">heart</span>
+          <span class="search-case-arrow">→</span>
+          <span class="search-case-result">heart</span>
+        </div>
+        <div style="font-size:11px;color:var(--c-muted);margin-top:4px">Нашёл напрямую: ❤️ 🧡 💕 …</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-head"><span class="code-lang">реализация · _queryVariants</span></div>
+    <pre><code><span class="com">// Таблица QWERTY → ЙЦУКЕН (ГОСТ Р 52659–2006)</span>
+<span class="kw">var</span> _LAT_TO_CYR = { <span class="str">'q'</span>:<span class="str">'й'</span>, <span class="str">'w'</span>:<span class="str">'ц'</span>, <span class="str">'e'</span>:<span class="str">'у'</span>, <span class="str">'r'</span>:<span class="str">'к'</span>, <span class="com">/* … */</span> };
+
+<span class="com">// Обратная таблица строится автоинверсией — не дублируется вручную</span>
+<span class="kw">var</span> _CYR_TO_LAT = (<span class="kw">function</span>() {
+  <span class="kw">var</span> map = {};
+  <span class="kw">for</span> (<span class="kw">var</span> lat <span class="kw">in</span> _LAT_TO_CYR) map[_LAT_TO_CYR[lat]] = lat;
+  <span class="kw">return</span> map;
+}());
+
+<span class="com">// Варианты запроса: [оригинал, lat→cyr, cyr→lat]</span>
+<span class="kw">function</span> <span class="fn">_queryVariants</span>(q) {
+  <span class="kw">var</span> variants = [q];
+  <span class="kw">var</span> asCyr = <span class="fn">_convertLayout</span>(q, _LAT_TO_CYR);
+  <span class="kw">if</span> (asCyr !== q) variants.<span class="fn">push</span>(asCyr);
+  <span class="kw">var</span> asLat = <span class="fn">_convertLayout</span>(q, _CYR_TO_LAT);
+  <span class="kw">if</span> (asLat !== q && asLat !== asCyr) variants.<span class="fn">push</span>(asLat);
+  <span class="kw">return</span> variants; <span class="com">// 1–3 варианта, без дубликатов</span>
+}</code></pre>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<!-- BEM                                                        -->
+<!-- ─────────────────────────────────────────────────────────── -->
+<section id="bem" class="section">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2 class="section-title">BEM и стили</h2>
+  </div>
+
+  <div class="info-box blue" style="margin-bottom:24px">
+    <span>🎨</span>
+    <div>Стили написаны по методологии <strong>BEM</strong>. Блок <code>.jcp</code> — пространство имён плагина (jQuery + charPicker). Все классы начинаются с <code>jcp__</code> или <code>jcp__…--…</code> — конфликты с вашими стилями исключены.</div>
+  </div>
+
+  <div class="bem-grid" style="margin-bottom:24px">
+    <div class="bem-row"><span class="bem-class bem-block">.jcp</span><span class="bem-desc">Блок — корневая обёртка поля + кнопки</span></div>
+    <div class="bem-row"><span class="bem-class bem-elem">.jcp__trigger</span><span class="bem-desc">Кнопка открытия попапа</span></div>
+    <div class="bem-row"><span class="bem-class bem-mod">.jcp__trigger--active</span><span class="bem-desc">Попап открыт</span></div>
+    <div class="bem-row"><span class="bem-class bem-elem">.jcp__popup</span><span class="bem-desc">Всплывающий пикер</span></div>
+    <div class="bem-row"><span class="bem-class bem-mod">.jcp__popup--pos-bottom</span><span class="bem-desc">Попап под полем</span></div>
+    <div class="bem-row"><span class="bem-class bem-mod">.jcp__popup--pos-top</span><span class="bem-desc">Попап над полем</span></div>
+    <div class="bem-row"><span class="bem-class bem-mod">.jcp__popup--pos-right</span><span class="bem-desc">Прижат к правому краю экрана</span></div>
+    <div class="bem-row"><span class="bem-class bem-elem">.jcp__search</span><span class="bem-desc">Панель поиска (обёртка)</span></div>
+    <div class="bem-row"><span class="bem-class bem-elem">.jcp__search-input</span><span class="bem-desc">Поле ввода запроса</span></div>
+    <div class="bem-row"><span class="bem-class bem-elem">.jcp__tabs</span><span class="bem-desc">Строка вкладок групп</span></div>
+    <div class="bem-row"><span class="bem-class bem-elem">.jcp__tab</span><span class="bem-desc">Одна вкладка-иконка</span></div>
+    <div class="bem-row"><span class="bem-class bem-mod">.jcp__tab--active</span><span class="bem-desc">Активная вкладка</span></div>
+    <div class="bem-row"><span class="bem-class bem-elem">.jcp__body</span><span class="bem-desc">Прокручиваемая область символов</span></div>
+    <div class="bem-row"><span class="bem-class bem-elem">.jcp__section-title</span><span class="bem-desc">Заголовок секции</span></div>
+    <div class="bem-row"><span class="bem-class bem-elem">.jcp__grid</span><span class="bem-desc">Flex-сетка символов</span></div>
+    <div class="bem-row"><span class="bem-class bem-elem">.jcp__char</span><span class="bem-desc">Одна ячейка символа</span></div>
+    <div class="bem-row"><span class="bem-class bem-mod">.jcp__char--sym</span><span class="bem-desc">Не-эмодзи символ (serif-шрифт)</span></div>
+    <div class="bem-row"><span class="bem-class bem-elem">.jcp__tooltip</span><span class="bem-desc">Тултип с именем (fixed)</span></div>
+    <div class="bem-row"><span class="bem-class bem-mod">.jcp__tooltip--visible</span><span class="bem-desc">Тултип показан</span></div>
+    <div class="bem-row"><span class="bem-class bem-elem">.jcp__empty</span><span class="bem-desc">Заглушка «ничего не найдено»</span></div>
+    <div class="bem-row"><span class="bem-class bem-elem">.jcp__layout-hint</span><span class="bem-desc">Подсказка о конвертации раскладки</span></div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-head"><span class="code-lang">кастомная тема через SCSS</span><button class="copy-btn" onclick="copyCode(this)">копировать</button></div>
+    <pre><code><span class="com">// Тёмная тема с янтарным акцентом</span>
+<span class="key">$cp-color-bg</span>        : <span class="str">#1c1c2e</span>;
+<span class="key">$cp-color-bg-panel</span>  : <span class="str">#25253a</span>;
+<span class="key">$cp-color-text</span>      : <span class="str">#e2e2f0</span>;
+<span class="key">$cp-color-border</span>    : <span class="str">#3a3a55</span>;
+<span class="key">$cp-color-accent</span>    : <span class="str">#f59e0b</span>;
+<span class="key">$cp-color-accent-dark</span>: <span class="str">#d97706</span>;
+<span class="key">$cp-popup-width</span>     : <span class="num">360px</span>;
+<span class="key">$cp-char-size</span>       : <span class="num">38px</span>;
+
+@<span class="kw">import</span> <span class="str">'jquery.charPicker'</span>;</code></pre>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<!-- АРХИТЕКТУРА                                               -->
+<!-- ─────────────────────────────────────────────────────────── -->
+<section id="arch" class="section">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2 class="section-title">Архитектура</h2>
+  </div>
+
+  <div class="arch-grid" style="margin-bottom:24px">
+
+    <div class="arch-card">
+      <div class="arch-card-title">Глобальная история</div>
+      <div class="arch-item"><span class="arch-item-name">_globalRecent</span><span class="arch-item-desc">Массив {c,n} — выбранные символы</span></div>
+      <div class="arch-item"><span class="arch-item-name">_globalRecentMax</span><span class="arch-item-desc">Лимит (из опции recentMax)</span></div>
+      <div class="arch-item"><span class="arch-item-name">globalAddRecent()</span><span class="arch-item-desc">Добавить/поднять в истории</span></div>
+    </div>
+
+    <div class="arch-card">
+      <div class="arch-card-title">Данные символов</div>
+      <div class="arch-item"><span class="arch-item-name">GROUPS[]</span><span class="arch-item-desc">10 групп + пустая 'recent'</span></div>
+      <div class="arch-item"><span class="arch-item-name">{id, label, icon}</span><span class="arch-item-desc">Метаданные группы</span></div>
+      <div class="arch-item"><span class="arch-item-name">chars: [{c,n}]</span><span class="arch-item-desc">~372 символа, кавычки через \uXXXX</span></div>
+    </div>
+
+    <div class="arch-card">
+      <div class="arch-card-title">Утилиты</div>
+      <div class="arch-item"><span class="arch-item-name">insertAtCursor()</span><span class="arch-item-desc">Вставка в selectionStart..End</span></div>
+      <div class="arch-item"><span class="arch-item-name">debounce(fn, ms)</span><span class="arch-item-desc">Задержка выполнения</span></div>
+    </div>
+
+    <div class="arch-card">
+      <div class="arch-card-title">Модуль раскладки</div>
+      <div class="arch-item"><span class="arch-item-name">_LAT_TO_CYR</span><span class="arch-item-desc">QWERTY → ЙЦУКЕН (ГОСТ)</span></div>
+      <div class="arch-item"><span class="arch-item-name">_CYR_TO_LAT</span><span class="arch-item-desc">Автоинверсия _LAT_TO_CYR</span></div>
+      <div class="arch-item"><span class="arch-item-name">_convertLayout()</span><span class="arch-item-desc">Посимвольная конвертация</span></div>
+      <div class="arch-item"><span class="arch-item-name">_queryVariants()</span><span class="arch-item-desc">→ [оригинал, lat→cyr, cyr→lat]</span></div>
+    </div>
+
+    <div class="arch-card">
+      <div class="arch-card-title">CharPicker — внутренние</div>
+      <div class="arch-item"><span class="arch-item-name">_uid()</span><span class="arch-item-desc">Уникальный namespace событий</span></div>
+      <div class="arch-item"><span class="arch-item-name">_buildPopup()</span><span class="arch-item-desc">Создать и заполнить попап</span></div>
+      <div class="arch-item"><span class="arch-item-name">_selectTab(gid)</span><span class="arch-item-desc">Переключить активную вкладку</span></div>
+      <div class="arch-item"><span class="arch-item-name">_renderGroup(gid)</span><span class="arch-item-desc">Отрисовать группу символов</span></div>
+      <div class="arch-item"><span class="arch-item-name">_makeGrid(chars)</span><span class="arch-item-desc">Сетка .jcp__char</span></div>
+      <div class="arch-item"><span class="arch-item-name">_doSearch(query)</span><span class="arch-item-desc">Поиск с вариантами раскладки</span></div>
+      <div class="arch-item"><span class="arch-item-name">_positionPopup()</span><span class="arch-item-desc">Вычислить top/left</span></div>
+    </div>
+
+    <div class="arch-card">
+      <div class="arch-card-title">CharPicker — публичные</div>
+      <div class="arch-item"><span class="arch-item-name">open()</span><span class="arch-item-desc">Открыть попап</span></div>
+      <div class="arch-item"><span class="arch-item-name">close()</span><span class="arch-item-desc">Закрыть попап</span></div>
+      <div class="arch-item"><span class="arch-item-name">destroy()</span><span class="arch-item-desc">Полный демонтаж</span></div>
+      <div class="arch-item"><span class="arch-item-name">$.fn.charPicker</span><span class="arch-item-desc">Диспетчер jQuery-плагина</span></div>
+    </div>
+
+  </div>
+
+  <p style="font-size:13px; font-weight:600; margin-bottom:12px">DOM-структура попапа</p>
+  <div class="dom-tree">
+<span class="dom-com">&lt;!-- .jcp вставляется вместо input в DOM-потоке --&gt;</span>
+<span class="dom-tag">&lt;span</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp"</span><span class="dom-tag">&gt;</span>
+  <span class="dom-tag">&lt;input</span> <span class="dom-cls">type</span>=<span class="dom-attr">"text"</span><span class="dom-tag"> …&gt;</span>
+  <span class="dom-tag">&lt;button</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__trigger"</span><span class="dom-tag">&gt;&lt;svg…&gt;&lt;/button&gt;</span>
+<span class="dom-tag">&lt;/span&gt;</span>
+
+<span class="dom-com">&lt;!-- Попап в &lt;body&gt; — абсолютное позиционирование --&gt;</span>
+<span class="dom-tag">&lt;div</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__popup jcp__popup--pos-bottom"</span> <span class="dom-cls">role</span>=<span class="dom-attr">"dialog"</span><span class="dom-tag">&gt;</span>
+  <span class="dom-tag">&lt;div</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__search"</span><span class="dom-tag">&gt;</span>
+    <span class="dom-tag">&lt;input</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__search-input"</span> <span class="dom-cls">type</span>=<span class="dom-attr">"search"</span><span class="dom-tag">&gt;</span>
+  <span class="dom-tag">&lt;/div&gt;</span>
+  <span class="dom-tag">&lt;div</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__tabs"</span> <span class="dom-cls">role</span>=<span class="dom-attr">"tablist"</span><span class="dom-tag">&gt;</span>
+    <span class="dom-tag">&lt;div</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__tab jcp__tab--active"</span> <span class="dom-cls">data-group</span>=<span class="dom-attr">"smileys"</span><span class="dom-tag">&gt;</span>😀<span class="dom-tag">&lt;/div&gt;</span>
+    <span class="dom-tag">&lt;div</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__tab"</span> <span class="dom-cls">data-group</span>=<span class="dom-attr">"arrows"</span><span class="dom-tag">&gt;</span>→<span class="dom-tag">&lt;/div&gt;</span>
+    <span class="dom-text">…</span>
+  <span class="dom-tag">&lt;/div&gt;</span>
+  <span class="dom-tag">&lt;div</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__body"</span><span class="dom-tag">&gt;</span>
+    <span class="dom-tag">&lt;div</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__section-title"</span><span class="dom-tag">&gt;</span>Результаты: 5<span class="dom-tag">&lt;/div&gt;</span>
+    <span class="dom-tag">&lt;div</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__layout-hint"</span><span class="dom-tag">&gt;</span>ℹ️ Раскладка: «сердце»<span class="dom-tag">&lt;/div&gt;</span>
+    <span class="dom-tag">&lt;div</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__grid"</span><span class="dom-tag">&gt;</span>
+      <span class="dom-tag">&lt;div</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__char"</span> <span class="dom-cls">role</span>=<span class="dom-attr">"button"</span><span class="dom-tag">&gt;</span>😀<span class="dom-tag">&lt;/div&gt;</span>
+      <span class="dom-tag">&lt;div</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__char jcp__char--sym"</span> <span class="dom-cls">role</span>=<span class="dom-attr">"button"</span><span class="dom-tag">&gt;</span>©<span class="dom-tag">&lt;/div&gt;</span>
+    <span class="dom-tag">&lt;/div&gt;</span>
+  <span class="dom-tag">&lt;/div&gt;</span>
+<span class="dom-tag">&lt;/div&gt;</span>
+
+<span class="dom-com">&lt;!-- Тултип в &lt;body&gt; — fixed --&gt;</span>
+<span class="dom-tag">&lt;div</span> <span class="dom-cls">class</span>=<span class="dom-attr">"jcp__tooltip"</span> <span class="dom-cls">role</span>=<span class="dom-attr">"tooltip"</span><span class="dom-tag">&gt;</span>grinning smile улыбка<span class="dom-tag">&lt;/div&gt;</span>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────────────────────────── -->
+<!-- БЕЗОПАСНОСТЬ                                               -->
+<!-- ─────────────────────────────────────────────────────────── -->
+<section id="security" class="section">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <h2 class="section-title">Безопасность</h2>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; margin-bottom:20px">
+    <div class="info-box green">
+      <span>🔒</span>
+      <div><strong>XSS исключён.</strong> Все символы вставляются через <code>document.createTextNode()</code> — HTML-теги экранируются как текст. <code>innerHTML</code> с пользовательскими данными не используется нигде.</div>
+    </div>
+    <div class="info-box green">
+      <span>🚫</span>
+      <div><strong>Нет eval.</strong> В плагине нет ни одного вызова <code>eval()</code>, <code>new Function()</code> или динамической компиляции кода. Все DOM-узлы создаются через jQuery с константными строками.</div>
+    </div>
+    <div class="info-box green">
+      <span>⚡</span>
+      <div><strong>Изоляция событий.</strong> Каждый экземпляр использует уникальный jQuery namespace (<code>click.cp.cp4k9m2x</code>). <code>destroy()</code> снимает только свои обработчики — соседние экземпляры не затрагиваются.</div>
+    </div>
+    <div class="info-box green">
+      <span>✏️</span>
+      <div><strong>Экранирование кавычек.</strong> Символы вроде <code>'</code> <code>'</code> <code>"</code> <code>«</code> заданы через <code>\uXXXX</code> — синтаксические конфликты с JS-строками исключены при парсинге файла.</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-head"><span class="code-lang">createTextNode — защита от XSS</span></div>
+    <pre><code><span class="com">// В _makeGrid: символ → DOM через createTextNode</span>
+$ch[<span class="num">0</span>].<span class="fn">appendChild</span>(document.<span class="fn">createTextNode</span>(item.c));
+
+<span class="com">// Даже если item.c = '&lt;script&gt;alert(1)&lt;/script&gt;' —</span>
+<span class="com">// браузер отобразит это как текст, не выполнит</span>
+
+<span class="com">// В insertAtCursor: вставка через .value, не innerHTML</span>
+el.value = el.value.<span class="fn">slice</span>(<span class="num">0</span>, start) + text + el.value.<span class="fn">slice</span>(end);</code></pre>
+  </div>
+</section>
+
+
+</div><!-- /.layout -->
+</div><!-- /.wrap -->
+
+<!-- ══ FOOTER ═════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-logo">jquery.charPicker</div>
+      <div>v1.2.0 · MIT License · jQuery ≥ 1.9 · ES5 · BEM</div>
+      <div>~372 символа · 10 групп · EN↔RU раскладка</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ══ СКРИПТЫ ════════════════════════════════════════════════ -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="jquery.charPicker.js"></script>
-
 <script>
 $(function () {
 
-  /* Инициализация полей */
-  $('#f1').charPicker();
-  $('#f2').charPicker({ recentMax: 16 });
-  $('#f3').charPicker({
-    onSelect: function (c, name) {
-      log('onSelect', '«' + c + '»  (' + name + ')');
-    },
-    onOpen: function () { log('onOpen', 'попап открыт'); },
-    onClose: function () { log('onClose', 'попап закрыт'); }
-  });
-
-  /* Лог */
-  function log(event, msg) {
-    var time = new Date().toLocaleTimeString('ru');
-    var $entry = $('<div class="log-entry"></div>');
-    $entry
-      .append($('<span class="dim"></span>').text('[' + time + '] '))
-      .append($('<span style="color:#86efac"></span>').text(event + ' '))
-      .append(document.createTextNode(msg));
-    $('#log').append($entry);
-    $('#log').scrollTop(9999);
+  // Вспомогательная функция логирования события
+  function logEvent(logId, char, name) {
+    var $log = $('#' + logId);
+    $log.text('\u2713 «' + char + '»  ' + name)
+        .addClass('flash');
+    setTimeout(function () { $log.removeClass('flash'); }, 600);
   }
 
-  /* Кнопки API */
-  $('#btn-open').on('click', function () { $('#f1').charPicker('open'); });
-  $('#btn-close').on('click', function () { $('#f1').charPicker('close'); });
+  // ── Инициализация демо-полей ──────────────────────────────
+  $('#demo-all').charPicker({
+    onSelect: function (c, n) { logEvent('log-all', c, n); }
+  });
 
-  var destroyed = false;
-  $('#btn-destroy').on('click', function () {
-    if (!destroyed) {
-      $('#f1').charPicker('destroy');
-      destroyed = true;
-      log('destroy()', 'плагин уничтожен на #f1');
-    }
+  $('#demo-emoji').charPicker({
+    panels: ['smileys', 'gestures', 'nature', 'food', 'symbols_emo'],
+    onSelect: function (c, n) { logEvent('log-emoji', c, n); }
   });
-  $('#btn-reinit').on('click', function () {
-    if (destroyed) {
-      $('#f1').charPicker();
-      destroyed = false;
-      log('charPicker()', 'плагин переинициализирован на #f1');
-    }
+
+  $('#demo-sym').charPicker({
+    panels: ['arrows', 'math', 'typography', 'currency', 'diacritics'],
+    onSelect: function (c, n) { logEvent('log-sym', c, n); }
   });
+
+  $('#demo-typo').charPicker({
+    panels: ['typography', 'currency'],
+    onSelect: function (c, n) { logEvent('log-typo', c, n); }
+  });
+
+  $('#demo-area').charPicker({
+    onSelect: function (c, n) { logEvent('log-area', c, n); }
+  });
+
+  $('#demo-ctrl').charPicker({
+    onOpen  : function () { logEvent('log-ctrl', '📂', 'открыт'); },
+    onClose : function () { logEvent('log-ctrl', '📁', 'закрыт'); },
+    onSelect: function (c, n) { logEvent('log-ctrl', c, n); }
+  });
+
+  // ── Навигация: подсветка активного пункта ────────────────
+  var $navLinks = $('.nav-link');
+  var $sections = $('section[id]');
+
+  function updateNav() {
+    var scrollY = window.scrollY + 80;
+    var current = '';
+    $sections.each(function () {
+      if (scrollY >= $(this).offset().top) {
+        current = $(this).attr('id');
+      }
+    });
+    $navLinks.removeClass('active');
+    $navLinks.filter('[href="#' + current + '"]').addClass('active');
+  }
+
+  $(window).on('scroll', updateNav);
+  updateNav();
 
 });
+
+// ── Управление демо-полем ────────────────────────────────────
+var _ctrlDestroyed = false;
+
+function destroyDemo() {
+  $('#demo-ctrl').charPicker('destroy');
+  _ctrlDestroyed = true;
+  $('#log-ctrl').text('destroy() вызван — плагин удалён');
+}
+
+function reinitDemo() {
+  if (_ctrlDestroyed) {
+    $('#demo-ctrl').charPicker({
+      onOpen  : function () { logEventGlobal('log-ctrl', '📂', 'открыт'); },
+      onClose : function () { logEventGlobal('log-ctrl', '📁', 'закрыт'); },
+      onSelect: function (c, n) { logEventGlobal('log-ctrl', c, n); }
+    });
+    _ctrlDestroyed = false;
+    $('#log-ctrl').text('reinit() — плагин пересоздан');
+  }
+}
+
+function logEventGlobal(logId, char, name) {
+  var $log = $('#' + logId);
+  $log.text('\u2713 «' + char + '»  ' + name)
+      .addClass('flash');
+  setTimeout(function () { $log.removeClass('flash'); }, 600);
+}
+
+// ── Копирование кода ─────────────────────────────────────────
+function copyCode(btn) {
+  var code = btn.closest('.code-block').querySelector('pre').innerText;
+  navigator.clipboard.writeText(code).then(function () {
+    var orig = btn.textContent;
+    btn.textContent = 'скопировано ✓';
+    setTimeout(function () { btn.textContent = orig; }, 1500);
+  });
+}
 </script>
+
 </body>
 </html>
